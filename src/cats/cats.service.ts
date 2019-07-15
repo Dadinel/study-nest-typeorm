@@ -1,48 +1,35 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, UpdateResult, DeleteResult } from 'typeorm';
 import { Cat } from './cat.entity';
 
 @Injectable()
 export class CatsService {
+    constructor(@InjectRepository(Cat) private catRepository: Repository<Cat>) {}
     cats: Array<Cat> = [];
     nextID: number = 0;
 
-    getCats(): Array<Cat> {
-        return this.cats;
+    async getCats(): Promise<Cat[]> {
+        return await this.catRepository.find();
     }
 
-    addCat(cat: Cat): Cat {
-        this.nextID++;
-        cat.id = this.nextID.toString();
-        this.cats.push(cat);
-        return cat;
-    }
-
-    getCat(id: string) {
-        let cat: Cat;
-
-        cat = this.cats.find( cat => cat.id == id);
-
-        return cat;
-    }
-
-    updateCat(cat: Cat): Cat {
-        let catBefore: Cat;
-        catBefore = this.findCatByID(cat.id);
-
-        if(catBefore) {
-            catBefore.name = cat.name;
-            catBefore.collor = cat.collor;
+    async addCat(cat: Cat): Promise<Cat> {
+        if(!cat.birthday) {
+            cat.birthday = new Date();
         }
 
-        return catBefore;
+        return await this.catRepository.save(cat);
     }
 
-    deleteCat(id: string) {
-        this.cats = this.cats.filter( catObj => catObj.id !== id);
-        return this.cats;
+    async getCat(id: number): Promise<Cat> {
+        return await this.catRepository.findOneOrFail(id);
     }
 
-    private findCatByID(id: string): Cat {
-        return this.cats.find( cat => cat.id == id);
+    async updateCat(id: number, cat: Cat): Promise<UpdateResult> {
+        return await this.catRepository.update(id, cat);
+    }
+
+    async deleteCat(id: number): Promise<DeleteResult> {
+        return await this.catRepository.delete(id);
     }
 }

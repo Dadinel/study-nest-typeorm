@@ -2,7 +2,7 @@
 
 
 ## Description
-Estudo pessoal de NestJS e TypeORM com DB que ainda não escolhi...
+Estudo pessoal de NestJS e TypeORM com DB SQLite
 
 
 ## Installation

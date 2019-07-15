@@ -1,5 +1,16 @@
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity()
 export class Cat {
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
     name: string;
+
+    @Column()
     collor: string;
+
+    @Column('date')
+    birthday: Date;
 }
